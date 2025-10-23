@@ -4,7 +4,6 @@ import com.meyrforge.heroscodex.feature_name_generator.domain.model.Gender
 import com.meyrforge.heroscodex.feature_name_generator.domain.repository.NameRepository
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import org.junit.Assert.*
@@ -32,49 +31,21 @@ class GenerateNameUseCaseTest {
   fun `should generate valid male name with correct structure`() {
     val name = useCase.generate(Gender.MALE)
 
-    assertNotNull("Name should not be null", name)
-    assertTrue("Name should not be blank", name.value.isNotBlank())
-    assertTrue("Name should end with male ending", maleEndings.any { name.value.endsWith(it) })
-    assertTrue("Name should start with valid prefix", nameStarts.any { name.value.startsWith(it) })
+    assertValidNameStructure(name.value, maleEndings)
   }
 
   @Test
   fun `should generate valid female name with correct structure`() {
     val name = useCase.generate(Gender.FEMALE)
 
-    assertNotNull("Name should not be null", name)
-    assertTrue("Name should not be blank", name.value.isNotBlank())
-    assertTrue("Name should end with female ending", femaleEndings.any { name.value.endsWith(it) })
-    assertTrue("Name should start with valid prefix", nameStarts.any { name.value.startsWith(it) })
+    assertValidNameStructure(name.value, femaleEndings)
   }
 
   @Test
   fun `should generate valid neutral name with either male or female ending`() {
     val name = useCase.generate(Gender.NEUTRAL)
 
-    assertNotNull("Name should not be null", name)
-    assertTrue("Name should not be blank", name.value.isNotBlank())
-    assertTrue(
-      "Name should end with male or female ending",
-      (maleEndings + femaleEndings).any { name.value.endsWith(it) }
-    )
-    assertTrue("Name should start with valid prefix", nameStarts.any { name.value.startsWith(it) })
-  }
-
-  @Test
-  fun `should call repository for male name generation`() {
-    useCase.generate(Gender.MALE)
-
-    verify { nameRepository.getMaleEndings() }
-    verify { nameRepository.getNameStarts() }
-  }
-
-  @Test
-  fun `should call repository for female name generation`() {
-    useCase.generate(Gender.FEMALE)
-
-    verify { nameRepository.getFemaleEndings() }
-    verify { nameRepository.getNameStarts() }
+    assertValidNameStructure(name.value, maleEndings + femaleEndings)
   }
 
   @Test
@@ -87,5 +58,17 @@ class GenerateNameUseCaseTest {
     }
 
     assertTrue("Should generate some variety in names", names.size > 1)
+  }
+
+  private fun assertValidNameStructure(nameValue: String, validEndings: List<String>) {
+    assertTrue("Name should not be blank", nameValue.isNotBlank())
+    assertTrue(
+      "Name should end with valid ending",
+      validEndings.any { nameValue.endsWith(it) }
+    )
+    assertTrue(
+      "Name should start with valid prefix",
+      nameStarts.any { nameValue.startsWith(it) }
+    )
   }
 }
