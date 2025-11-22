@@ -2,6 +2,7 @@ package com.meyrforge.heroscodex.core.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -10,26 +11,72 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-  primary = Purple80,
-  secondary = PurpleGrey80,
-  tertiary = Pink80
+private val DarkColorScheme: ColorScheme = darkColorScheme(
+  primary = PrimaryRed,
+  onPrimary = TextOverRed,
+  primaryContainer = HoverRed,
+  onPrimaryContainer = TextOverRed,
+
+  secondary = Gold,
+  onSecondary = TertiaryText,
+  secondaryContainer = Cards,
+  onSecondaryContainer = PrimaryText,
+
+  tertiary = LightRed,
+  onTertiary = TextOverRed,
+  tertiaryContainer = Cards,
+  onTertiaryContainer = PrimaryText,
+
+  background = Background,
+  onBackground = PrimaryText,
+
+  surface = Cards,
+  onSurface = PrimaryText,
+
+  surfaceVariant = Cards2,
+  onSurfaceVariant = FourthText,
+
+  // Outline / Dividers
+  outline = Outline,
+  outlineVariant = Divider,
+
+  // States
+  error = Error,
+  onError = OnStateLightText,
 )
 
-private val LightColorScheme = lightColorScheme(
-  primary = Purple40,
-  secondary = PurpleGrey40,
-  tertiary = Pink40
+private val LightColorScheme: ColorScheme = lightColorScheme(
+  primary = PrimaryRed,
+  onPrimary = TextOverRed,
+  primaryContainer = LightRed,
+  onPrimaryContainer = TextOverRed,
 
-  /* Other default colors to override
-  background = Color(0xFFFFFBFE),
-  surface = Color(0xFFFFFBFE),
-  onPrimary = Color.White,
-  onSecondary = Color.White,
-  onTertiary = Color.White,
-  onBackground = Color(0xFF1C1B1F),
-  onSurface = Color(0xFF1C1B1F),
-  */
+  secondary = Gold,
+  onSecondary = TertiaryText,
+  secondaryContainer = Cards2,
+  onSecondaryContainer = TertiaryText,
+
+  tertiary = Cards,
+  onTertiary = PrimaryText,
+  tertiaryContainer = Cards2,
+  onTertiaryContainer = TertiaryText,
+
+  background = Cards2,
+  onBackground = TertiaryText,
+
+  surface = Cards2,
+  onSurface = TertiaryText,
+
+  surfaceVariant = Cards,
+  onSurfaceVariant = PrimaryText,
+
+  // Outline / Dividers
+  outline = Outline,
+  outlineVariant = DividerOnLight,
+
+  // States
+  error = Error,
+  onError = OnStateLightText,
 )
 
 @Composable
@@ -51,7 +98,7 @@ fun HerosCodexTheme(
 
   MaterialTheme(
     colorScheme = colorScheme,
-    typography = Typography,
+    typography = MedievalTypography,
     content = content
   )
 }
