@@ -10,7 +10,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.meyrforge.heroscodex.core.ui.theme.HerosCodexTheme
 import com.meyrforge.heroscodex.feature_name_generator.presentation.screen.NameGeneratorScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

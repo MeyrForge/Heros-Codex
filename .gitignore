@@ -15,3 +15,6 @@
 local.properties
 .docs
 .editorconfig
+
+# Database file
+app/src/main/assets/dnd_names.db

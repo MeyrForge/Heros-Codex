@@ -2,10 +2,13 @@ package com.meyrforge.heroscodex.feature_name_generator.domain.usecase
 
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.Background
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.Gender
+import com.meyrforge.heroscodex.feature_name_generator.domain.model.HeroName
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.Race
 import com.meyrforge.heroscodex.feature_name_generator.domain.repository.NameRepository
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.Assert.*
@@ -15,68 +18,85 @@ class GenerateNameUseCaseTest {
   private lateinit var nameRepository: NameRepository
   private lateinit var useCase: GenerateNameUseCase
 
-  private val maleEndings = listOf("on", "ar", "us", "or", "an", "er", "ix")
-  private val femaleEndings = listOf("ia", "ra", "el", "na", "la", "sa", "yn")
-  private val nameStarts = listOf("Aer", "Bel", "Cel", "Dar")
-  private val suffixes = listOf("the Devoted", "the Faithful", "the Blessed")
-
   @Before
   fun setUp() {
     nameRepository = mockk()
     useCase = GenerateNameUseCase(nameRepository)
-
-    every { nameRepository.getMaleEndings(any()) } returns maleEndings
-    every { nameRepository.getFemaleEndings(any()) } returns femaleEndings
-    every { nameRepository.getNameStarts(any()) } returns nameStarts
-    every { nameRepository.getSuffixes(any()) } returns suffixes
   }
 
   @Test
-  fun `should generate valid male name with correct structure`() {
-    val name = useCase.generate(Gender.MALE, Race.HUMAN, Background.ACOLYTE)
-
-    assertValidNameStructure(name.name, maleEndings)
-  }
-
-  @Test
-  fun `should generate valid female name with correct structure`() {
-    val name = useCase.generate(Gender.FEMALE, Race.HUMAN, Background.ACOLYTE)
-
-    assertValidNameStructure(name.name, femaleEndings)
-  }
-
-  @Test
-  fun `should generate valid neutral name with either male or female ending`() {
-    val name = useCase.generate(Gender.NEUTRAL, Race.HUMAN, Background.ACOLYTE)
-
-    assertValidNameStructure(name.name, maleEndings + femaleEndings)
-  }
-
-  @Test
-  fun `should generate variety in names on multiple calls`() {
-    val names = mutableSetOf<String>()
-
-    repeat(10) {
-      val name = useCase.generate(Gender.MALE, Race.HUMAN, Background.ACOLYTE)
-      names.add(name.name)
-    }
-
-    assertTrue("Should generate some variety in names", names.size > 1)
-  }
-
-  private fun assertValidNameStructure(nameValue: String, validEndings: List<String>) {
-    assertTrue("Name should not be blank", nameValue.isNotBlank())
-    assertTrue(
-      "Name should end with valid suffix",
-      suffixes.any { nameValue.endsWith(it) }
+  fun `should return success when repository returns valid name`() = runTest {
+    val expectedHeroName = HeroName(
+      name = "Aldric the Devoted",
+      race = Race.HUMAN,
+      gender = Gender.MALE,
+      background = Background.ACOLYTE
     )
-    assertTrue(
-      "Name should contain valid ending",
-      validEndings.any { ending -> nameValue.contains(ending) }
+
+    coEvery {
+      nameRepository.generateName(Race.HUMAN, Gender.MALE, Background.ACOLYTE)
+    } returns Result.success(expectedHeroName)
+
+    val result = useCase(Gender.MALE, Race.HUMAN, Background.ACOLYTE)
+
+    assertTrue(result.isSuccess)
+    assertEquals(expectedHeroName, result.getOrNull())
+    coVerify { nameRepository.generateName(Race.HUMAN, Gender.MALE, Background.ACOLYTE) }
+  }
+
+  @Test
+  fun `should return failure when repository fails`() = runTest {
+    val exception = Exception("Database error")
+
+    coEvery {
+      nameRepository.generateName(Race.ELF, Gender.FEMALE, Background.NOBLE)
+    } returns Result.failure(exception)
+
+    val result = useCase(Gender.FEMALE, Race.ELF, Background.NOBLE)
+
+    assertTrue(result.isFailure)
+    assertEquals(exception, result.exceptionOrNull())
+  }
+
+  @Test
+  fun `should generate different names for different races`() = runTest {
+    val humanName = HeroName("Marcus", Race.HUMAN, Gender.MALE, Background.SOLDIER)
+    val elfName = HeroName("Legolas", Race.ELF, Gender.MALE, Background.SOLDIER)
+
+    coEvery {
+      nameRepository.generateName(Race.HUMAN, Gender.MALE, Background.SOLDIER)
+    } returns Result.success(humanName)
+
+    coEvery {
+      nameRepository.generateName(Race.ELF, Gender.MALE, Background.SOLDIER)
+    } returns Result.success(elfName)
+
+    val humanResult = useCase(Gender.MALE, Race.HUMAN, Background.SOLDIER)
+    val elfResult = useCase(Gender.MALE, Race.ELF, Background.SOLDIER)
+
+    assertEquals("Marcus", humanResult.getOrNull()?.name)
+    assertEquals("Legolas", elfResult.getOrNull()?.name)
+  }
+
+  @Test
+  fun `should preserve all parameters in generated HeroName`() = runTest {
+    val heroName = HeroName(
+      name = "Thokk",
+      race = Race.HALF_ORC,
+      gender = Gender.NEUTRAL,
+      background = Background.OUTLANDER
     )
-    assertTrue(
-      "Name should start with valid prefix",
-      nameStarts.any { nameValue.startsWith(it) }
-    )
+
+    coEvery {
+      nameRepository.generateName(Race.HALF_ORC, Gender.NEUTRAL, Background.OUTLANDER)
+    } returns Result.success(heroName)
+
+    val result = useCase(Gender.NEUTRAL, Race.HALF_ORC, Background.OUTLANDER)
+
+    val generatedName = result.getOrNull()
+    assertNotNull(generatedName)
+    assertEquals(Race.HALF_ORC, generatedName?.race)
+    assertEquals(Gender.NEUTRAL, generatedName?.gender)
+    assertEquals(Background.OUTLANDER, generatedName?.background)
   }
 }

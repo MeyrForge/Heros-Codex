@@ -2,7 +2,8 @@ package com.meyrforge.heroscodex.feature_name_generator.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -19,6 +20,7 @@ data class SelectorOption(
   val label: String
 )
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun <T> OptionSelector(
   title: String,
@@ -40,9 +42,11 @@ fun <T> OptionSelector(
       modifier = Modifier.padding(bottom = 8.dp)
     )
 
-    Row(
+    FlowRow(
       modifier = Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.spacedBy(8.dp)
+      horizontalArrangement = Arrangement.spacedBy(8.dp),
+      verticalArrangement = Arrangement.spacedBy(8.dp),
+      maxItemsInEachRow = 3
     ) {
       options.forEach { option ->
         val mappedOption = optionMapper(option)
@@ -52,6 +56,12 @@ fun <T> OptionSelector(
           onClick = { onOptionSelected(mappedOption) },
           modifier = Modifier.weight(1f)
         )
+      }
+      
+      // Add invisible spacers to fill incomplete rows
+      val remainingSlots = (3 - (options.size % 3)) % 3
+      repeat(remainingSlots) {
+        androidx.compose.foundation.layout.Spacer(modifier = Modifier.weight(1f))
       }
     }
   }
@@ -82,7 +92,8 @@ private fun SelectionChip(
   ) {
     Text(
       text = label,
-      style = MaterialTheme.typography.bodyMedium
+      style = MaterialTheme.typography.bodyMedium,
+      textAlign = androidx.compose.ui.text.style.TextAlign.Center
     )
   }
 }

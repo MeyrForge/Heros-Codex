@@ -1,7 +1,13 @@
 package com.meyrforge.heroscodex.feature_name_generator.domain.model
 
 enum class Race {
-  HUMAN,
+  DRAGONBORN,
+  DWARF,
   ELF,
-  DWARF
+  GNOME,
+  HALF_ELF,
+  HALF_ORC,
+  HALFLING,
+  HUMAN,
+  TIEFLING
 }

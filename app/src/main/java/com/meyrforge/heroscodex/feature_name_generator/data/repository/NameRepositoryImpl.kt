@@ -1,44 +1,77 @@
 package com.meyrforge.heroscodex.feature_name_generator.data.repository
 
+import com.meyrforge.heroscodex.feature_name_generator.data.local.dao.NameDao
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.Background
+import com.meyrforge.heroscodex.feature_name_generator.domain.model.Gender
+import com.meyrforge.heroscodex.feature_name_generator.domain.model.HeroName
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.Race
 import com.meyrforge.heroscodex.feature_name_generator.domain.repository.NameRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NameRepositoryImpl @Inject constructor() : NameRepository {
+class NameRepositoryImpl @Inject constructor(
+  private val nameDao: NameDao
+) : NameRepository {
 
-  override fun getMaleEndings(race: Race): List<String> = when (race) {
-    Race.HUMAN -> listOf("on", "ar", "us", "or", "an", "er", "ix")
-    Race.ELF -> listOf("ion", "ael", "or", "las", "dir", "thil", "mir")
-    Race.DWARF -> listOf("im", "oin", "ur", "in", "ar", "or", "ak")
+  override suspend fun generateName(
+    race: Race,
+    gender: Gender,
+    background: Background
+  ): Result<HeroName> = withContext(Dispatchers.IO) {
+    try {
+      val name = nameDao.getRandomName(
+        raceId = race.toId(),
+        genderId = gender.toId(),
+        backgroundId = background.toId()
+      ) ?: "Unknown Hero"
+
+      Result.success(
+        HeroName(
+          name = name,
+          race = race,
+          gender = gender,
+          background = background
+        )
+      )
+    } catch (e: Exception) {
+      Result.failure(e)
+    }
   }
 
-  override fun getFemaleEndings(race: Race): List<String> = when (race) {
-    Race.HUMAN -> listOf("ia", "ra", "el", "na", "la", "sa", "yn")
-    Race.ELF -> listOf("iel", "wen", "riel", "ith", "lia", "eth", "ara")
-    Race.DWARF -> listOf("a", "in", "is", "ild", "ara", "eth", "ona")
+  private fun Race.toId(): Int = when (this) {
+    Race.DRAGONBORN -> 0
+    Race.DWARF -> 1
+    Race.ELF -> 2
+    Race.GNOME -> 3
+    Race.HALF_ELF -> 4
+    Race.HALF_ORC -> 5
+    Race.HALFLING -> 6
+    Race.HUMAN -> 7
+    Race.TIEFLING -> 8
   }
 
-  override fun getNameStarts(race: Race): List<String> = when (race) {
-    Race.HUMAN -> listOf(
-      "Aer", "Bel", "Cel", "Dar", "Eld", "Fel", "Gar", "Hal", "Ith", "Jor",
-      "Kel", "Lys", "Mor", "Nar", "Orl", "Pyr", "Qua", "Ral", "Syl", "Tar"
-    )
-    Race.ELF -> listOf(
-      "Ael", "Ber", "Cel", "Dar", "Elo", "Fae", "Gal", "Hal", "Ili", "Kal",
-      "Leg", "Mel", "Nar", "Ori", "Pel", "Qua", "Sil", "Thar", "Uth", "Val"
-    )
-    Race.DWARF -> listOf(
-      "Bar", "Dor", "Dur", "Ebr", "Gar", "Gim", "Kal", "Mor", "Nor", "Ors",
-      "Thr", "Tor", "Bal", "Bof", "Dag", "Dwa", "Fal", "Kil", "Thor", "Ulf"
-    )
+  private fun Gender.toId(): Int = when (this) {
+    Gender.MALE -> 0
+    Gender.FEMALE -> 1
+    Gender.NEUTRAL -> 2
   }
 
-  override fun getSuffixes(background: Background): List<String> = when (background) {
-    Background.ACOLYTE -> listOf("the Devoted", "the Faithful", "the Blessed", "the Pious")
-    Background.SOLDIER -> listOf("the Brave", "the Bold", "the Shield", "the Sword")
-    Background.NOBLE -> listOf("the Noble", "the Highborn", "the Lordly", "the Regal")
+  private fun Background.toId(): Int = when (this) {
+    Background.ACOLYTE -> 0
+    Background.CHARLATAN -> 1
+    Background.CRIMINAL -> 2
+    Background.ENTERTAINER -> 3
+    Background.FOLK_HERO -> 4
+    Background.GUILD_ARTISAN -> 5
+    Background.HERMIT -> 6
+    Background.NOBLE -> 7
+    Background.OUTLANDER -> 8
+    Background.SAGE -> 9
+    Background.SAILOR -> 10
+    Background.SOLDIER -> 11
+    Background.URCHIN -> 12
   }
 }

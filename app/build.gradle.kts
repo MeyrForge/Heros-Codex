@@ -3,6 +3,7 @@ plugins {
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.hilt.android)
+  id("com.google.devtools.ksp")
   kotlin("kapt")
 }
 
@@ -36,6 +37,13 @@ android {
   buildFeatures {
     compose = true
   }
+  
+  sourceSets {
+    getByName("main") {
+      assets.srcDirs("src/main/assets")
+    }
+  }
+  
   kotlin {
     compilerOptions {
       jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
@@ -69,7 +77,13 @@ dependencies {
 
   // Hilt
   implementation(libs.hilt.android)
+  implementation(libs.hilt.navigation.compose)
   kapt(libs.hilt.android.compiler)
+
+  // Room
+  implementation(libs.androidx.room.runtime)
+  implementation(libs.androidx.room.ktx)
+  ksp(libs.androidx.room.compiler)
 
   // Coroutines / Flow
   implementation(libs.kotlinx.coroutines.core)
