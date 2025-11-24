@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.HerosCodex" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Splash Screen -->
+        <item name="android:windowSplashScreenBackground">#210f37</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">#210f37</item>
+    </style>
+</resources>
