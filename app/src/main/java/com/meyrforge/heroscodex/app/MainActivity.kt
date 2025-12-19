@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     setContent {
-      HerosCodexTheme(dynamicColor = false) {
+      HerosCodexTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
           NameGeneratorScreen(
             modifier = Modifier
