@@ -8,6 +8,7 @@ import com.meyrforge.heroscodex.feature_name_generator.domain.model.HeroName
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.Race
 import com.meyrforge.heroscodex.feature_name_generator.domain.usecase.GenerateNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,6 +42,7 @@ class NameGeneratorViewModel @Inject constructor(
     _uiState.update { it.copy(isLoading = true) }
 
     viewModelScope.launch {
+      delay(1220L)
       val result = generateNameUseCase(
         gender = _uiState.value.selectedGender,
         race = _uiState.value.selectedRace,
@@ -76,7 +78,7 @@ class NameGeneratorViewModel @Inject constructor(
 }
 
 data class NameGeneratorUiState(
-  val selectedRace: Race = Race.HUMAN,
+  val selectedRace: Race = Race.DRAGONBORN,
   val selectedGender: Gender = Gender.MALE,
   val selectedBackground: Background = Background.ACOLYTE,
   val generatedName: HeroName? = null,

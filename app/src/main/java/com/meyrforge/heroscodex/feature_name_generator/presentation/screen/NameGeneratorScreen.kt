@@ -172,7 +172,8 @@ fun NameGeneratorScreen(
 
         GeneratedNameDisplay(
           generatedName = uiState.generatedName?.name ?: "",
-          onGenerateClick = viewModel::generateName
+          onGenerateClick = viewModel::generateName,
+          isLoading = uiState.isLoading
         )
 
         Button(
