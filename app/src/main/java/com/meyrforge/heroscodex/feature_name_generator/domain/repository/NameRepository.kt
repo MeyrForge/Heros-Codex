@@ -11,4 +11,6 @@ interface NameRepository {
     gender: Gender,
     background: Background
   ): Result<HeroName>
+
+  suspend fun saveName(heroName: HeroName): Result<Unit>
 }

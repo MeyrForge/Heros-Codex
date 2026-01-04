@@ -1,5 +1,7 @@
 package com.meyrforge.heroscodex.feature_name_generator.data.repository
 
+import com.meyrforge.heroscodex.core.database.dao.SavedNameDao
+import com.meyrforge.heroscodex.core.database.entity.SavedNameEntity
 import com.meyrforge.heroscodex.feature_name_generator.data.local.dao.NameDao
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.Background
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.Gender
@@ -13,7 +15,8 @@ import javax.inject.Singleton
 
 @Singleton
 class NameRepositoryImpl @Inject constructor(
-  private val nameDao: NameDao
+  private val nameDao: NameDao,
+  private val savedNameDao: SavedNameDao
 ) : NameRepository {
 
   override suspend fun generateName(
@@ -36,6 +39,21 @@ class NameRepositoryImpl @Inject constructor(
           background = background
         )
       )
+    } catch (e: Exception) {
+      Result.failure(e)
+    }
+  }
+
+  override suspend fun saveName(heroName: HeroName): Result<Unit> = withContext(Dispatchers.IO) {
+    try {
+      val entity = SavedNameEntity(
+        name = heroName.name,
+        raceId = heroName.race.toId(),
+        genderId = heroName.gender.toId(),
+        backgroundId = heroName.background.toId()
+      )
+      savedNameDao.insert(entity)
+      Result.success(Unit)
     } catch (e: Exception) {
       Result.failure(e)
     }

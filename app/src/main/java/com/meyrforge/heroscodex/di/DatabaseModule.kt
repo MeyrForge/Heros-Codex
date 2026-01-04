@@ -1,6 +1,8 @@
 package com.meyrforge.heroscodex.di
 
 import android.content.Context
+import com.meyrforge.heroscodex.core.database.UserDatabase
+import com.meyrforge.heroscodex.core.database.dao.SavedNameDao
 import com.meyrforge.heroscodex.feature_name_generator.data.local.NameDatabase
 import com.meyrforge.heroscodex.feature_name_generator.data.local.dao.NameDao
 import dagger.Module
@@ -27,5 +29,18 @@ object DatabaseModule {
   fun provideNameDao(database: NameDatabase): NameDao {
     return database.nameDao()
   }
-}
 
+  @Provides
+  @Singleton
+  fun provideUserDatabase(
+    @ApplicationContext context: Context
+  ): UserDatabase {
+    return UserDatabase.getInstance(context)
+  }
+
+  @Provides
+  @Singleton
+  fun provideSavedNameDao(database: UserDatabase): SavedNameDao {
+    return database.savedNameDao()
+  }
+}

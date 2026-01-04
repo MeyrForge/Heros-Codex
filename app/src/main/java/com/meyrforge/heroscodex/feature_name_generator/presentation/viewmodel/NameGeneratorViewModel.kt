@@ -7,6 +7,7 @@ import com.meyrforge.heroscodex.feature_name_generator.domain.model.Gender
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.HeroName
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.Race
 import com.meyrforge.heroscodex.feature_name_generator.domain.usecase.GenerateNameUseCase
+import com.meyrforge.heroscodex.feature_name_generator.domain.usecase.SaveNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NameGeneratorViewModel @Inject constructor(
-  private val generateNameUseCase: GenerateNameUseCase
+  private val generateNameUseCase: GenerateNameUseCase,
+  private val saveNameUseCase: SaveNameUseCase
 ) : ViewModel() {
 
   private val _uiState = MutableStateFlow(NameGeneratorUiState())
@@ -72,6 +74,37 @@ class NameGeneratorViewModel @Inject constructor(
     }
   }
 
+  fun saveGeneratedName() {
+    val nameToSave = _uiState.value.generatedName ?: return
+
+    _uiState.update { it.copy(isSaving = true) }
+
+    viewModelScope.launch {
+      delay(1200L)
+      val result = saveNameUseCase(nameToSave)
+
+      result.fold(
+        onSuccess = {
+          _uiState.update {
+            it.copy(
+              generatedName = null,
+              isSaving = false,
+              error = null
+            )
+          }
+        },
+        onFailure = { exception ->
+          _uiState.update {
+            it.copy(
+              isSaving = false,
+              error = exception.message ?: "Error al guardar el nombre"
+            )
+          }
+        }
+      )
+    }
+  }
+
   fun clearError() {
     _uiState.update { it.copy(error = null) }
   }
@@ -85,5 +118,6 @@ data class NameGeneratorUiState(
   val currentTokens: Int = 10,
   val maxTokens: Int = 10,
   val isLoading: Boolean = false,
+  val isSaving: Boolean = false,
   val error: String? = null
 )
