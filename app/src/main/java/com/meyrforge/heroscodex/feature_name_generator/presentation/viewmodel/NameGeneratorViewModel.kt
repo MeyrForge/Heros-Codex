@@ -2,12 +2,12 @@ package com.meyrforge.heroscodex.feature_name_generator.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.meyrforge.heroscodex.feature_name_generator.domain.model.Background
-import com.meyrforge.heroscodex.feature_name_generator.domain.model.Gender
+import com.meyrforge.heroscodex.core.domain.model.Background
+import com.meyrforge.heroscodex.core.domain.model.Gender
+import com.meyrforge.heroscodex.core.domain.usecase.SaveNameUseCase
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.HeroName
-import com.meyrforge.heroscodex.feature_name_generator.domain.model.Race
+import com.meyrforge.heroscodex.core.domain.model.Race
 import com.meyrforge.heroscodex.feature_name_generator.domain.usecase.GenerateNameUseCase
-import com.meyrforge.heroscodex.feature_name_generator.domain.usecase.SaveNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -80,7 +80,7 @@ class NameGeneratorViewModel @Inject constructor(
     _uiState.update { it.copy(isSaving = true) }
 
     viewModelScope.launch {
-      delay(1200L)
+      delay(1220L)
       val result = saveNameUseCase(nameToSave)
 
       result.fold(

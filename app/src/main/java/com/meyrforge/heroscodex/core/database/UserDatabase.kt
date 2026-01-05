@@ -4,12 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.meyrforge.heroscodex.core.database.dao.SavedNameDao
 import com.meyrforge.heroscodex.core.database.entity.SavedNameEntity
+import java.util.UUID
 
 @Database(
   entities = [SavedNameEntity::class],
-  version = 1,
+  version = 2, // Incremented version
   exportSchema = false
 )
 abstract class UserDatabase : RoomDatabase() {
@@ -33,7 +36,18 @@ abstract class UserDatabase : RoomDatabase() {
         context.applicationContext,
         UserDatabase::class.java,
         DATABASE_NAME
-      ).build()
+      ).addMigrations(MIGRATION_1_2)
+       .build()
+    }
+
+    private val MIGRATION_1_2 = object : Migration(1, 2) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            val defaultUuid = UUID.randomUUID().toString()
+            val defaultCreatedAt = System.currentTimeMillis()
+
+            db.execSQL("ALTER TABLE saved_names ADD COLUMN uuid TEXT NOT NULL DEFAULT '$defaultUuid'")
+            db.execSQL("ALTER TABLE saved_names ADD COLUMN created_at INTEGER NOT NULL DEFAULT $defaultCreatedAt")
+        }
     }
   }
 }

@@ -1,7 +1,5 @@
 package com.meyrforge.heroscodex.feature_name_generator.presentation.screen
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,9 +35,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.meyrforge.heroscodex.core.ui.theme.DarkBackgroundEnd
 import com.meyrforge.heroscodex.core.ui.theme.DarkBackgroundStart
 import com.meyrforge.heroscodex.core.ui.theme.MagicalGold
-import com.meyrforge.heroscodex.feature_name_generator.domain.model.Background
-import com.meyrforge.heroscodex.feature_name_generator.domain.model.Gender
-import com.meyrforge.heroscodex.feature_name_generator.domain.model.Race
+import com.meyrforge.heroscodex.core.domain.model.Background
+import com.meyrforge.heroscodex.core.domain.model.Gender
+import com.meyrforge.heroscodex.core.domain.model.Race
 import com.meyrforge.heroscodex.feature_name_generator.presentation.components.CompactOptionSelector
 import com.meyrforge.heroscodex.feature_name_generator.presentation.components.GeneratedNameDisplay
 import com.meyrforge.heroscodex.feature_name_generator.presentation.components.HorizontalOptionSelector

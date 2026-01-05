@@ -10,7 +10,7 @@ class NavigateToMenuOptionUseCase @Inject constructor() {
     return when (option) {
       MenuOption.NAME_GENERATOR -> Screen.NameGenerator
       MenuOption.HERO_GENERATOR -> null // TODO: Implement when hero generator feature is ready
-      MenuOption.MY_HEROES -> null // TODO: Implement when my heroes feature is ready
+      MenuOption.MY_HEROES -> Screen.SavedHeroes
     }
   }
 }

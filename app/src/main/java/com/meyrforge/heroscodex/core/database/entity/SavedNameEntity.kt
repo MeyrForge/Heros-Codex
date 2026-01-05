@@ -10,6 +10,9 @@ data class SavedNameEntity(
   @ColumnInfo(name = "id")
   val id: Long = 0,
 
+  @ColumnInfo(name = "uuid")
+  val uuid: String,
+
   @ColumnInfo(name = "name")
   val name: String,
 
@@ -20,5 +23,8 @@ data class SavedNameEntity(
   val genderId: Int,
 
   @ColumnInfo(name = "background_id")
-  val backgroundId: Int
+  val backgroundId: Int,
+
+  @ColumnInfo(name = "created_at")
+  val createdAt: Long
 )

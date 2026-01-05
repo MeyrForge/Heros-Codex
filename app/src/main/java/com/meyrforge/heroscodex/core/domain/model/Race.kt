@@ -1,4 +1,4 @@
-package com.meyrforge.heroscodex.feature_name_generator.domain.model
+package com.meyrforge.heroscodex.core.domain.model
 
 enum class Race {
   DRAGONBORN,

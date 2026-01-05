@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.meyrforge.heroscodex.feature_main_menu.presentation.screen.MainMenuScreen
 import com.meyrforge.heroscodex.feature_name_generator.presentation.screen.NameGeneratorScreen
+import com.meyrforge.heroscodex.feature_saved_heroes.presentation.screen.SavedHeroesScreen
 
 @Composable
 fun AppNavigation(innerPadding: PaddingValues) {
@@ -23,6 +24,9 @@ fun AppNavigation(innerPadding: PaddingValues) {
     }
     composable(Screen.NameGenerator.route) {
       NameGeneratorScreen()
+    }
+    composable(Screen.SavedHeroes.route){
+      SavedHeroesScreen()
     }
   }
 }
