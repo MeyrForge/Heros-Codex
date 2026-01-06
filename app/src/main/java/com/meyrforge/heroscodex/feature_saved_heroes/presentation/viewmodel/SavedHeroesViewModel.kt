@@ -3,6 +3,7 @@ package com.meyrforge.heroscodex.feature_saved_heroes.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.meyrforge.heroscodex.core.domain.model.SavedHero
+import com.meyrforge.heroscodex.feature_saved_heroes.domain.usecase.DeleteSavedHeroUseCase
 import com.meyrforge.heroscodex.feature_saved_heroes.domain.usecase.GetSavedHeroesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SavedHeroesViewModel @Inject constructor(
-    private val getSavedHeroesUseCase: GetSavedHeroesUseCase
+    private val getSavedHeroesUseCase: GetSavedHeroesUseCase,
+    private val deleteSavedHeroUseCase: DeleteSavedHeroUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SavedHeroesUiState())
@@ -57,6 +59,24 @@ class SavedHeroesViewModel @Inject constructor(
             } else {
                 it.copy(expandedHeroId = heroId)
             }
+        }
+    }
+
+    fun onDeleteHeroClicked(heroId: UUID) {
+        viewModelScope.launch {
+            val result = deleteSavedHeroUseCase(heroId)
+            result.fold(
+                onSuccess = {
+                    loadHeroes() // Reload heroes after deletion
+                },
+                onFailure = { error ->
+                    _uiState.update {
+                        it.copy(
+                            error = error.message ?: "An unknown error occurred"
+                        )
+                    }
+                }
+            )
         }
     }
 }

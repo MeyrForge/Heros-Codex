@@ -33,7 +33,8 @@ import com.meyrforge.heroscodex.core.ui.theme.MagicalGold
 fun ExpandableHeroCard(
     hero: SavedHero,
     isExpanded: Boolean,
-    onCardClick: () -> Unit
+    onCardClick: () -> Unit,
+    onDeleteClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -83,7 +84,7 @@ fun ExpandableHeroCard(
                             Text("Editar", color = MagicalGold)
                         }
                         Spacer(modifier = Modifier.width(8.dp))
-                        TextButton(onClick = { /* TODO: Implement Delete */ }) {
+                        TextButton(onClick = { onDeleteClick() }) {
                             Text("Eliminar", color = Color.Red, fontWeight = FontWeight.Bold)
                         }
                     }

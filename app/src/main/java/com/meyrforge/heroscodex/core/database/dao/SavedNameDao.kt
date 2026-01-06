@@ -14,4 +14,7 @@ interface SavedNameDao {
 
     @Query("SELECT * FROM saved_names ORDER BY created_at ASC")
     suspend fun getSavedNames(): List<SavedNameEntity>
+
+    @Query("DELETE FROM saved_names WHERE uuid = :heroUuid")
+    suspend fun deleteByUuid(heroUuid: String)
 }

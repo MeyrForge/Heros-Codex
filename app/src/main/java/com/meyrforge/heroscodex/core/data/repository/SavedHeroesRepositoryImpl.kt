@@ -8,6 +8,7 @@ import com.meyrforge.heroscodex.core.domain.repository.SavedHeroesRepository
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.HeroName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.UUID
 import javax.inject.Inject
 
 class SavedHeroesRepositoryImpl @Inject constructor(
@@ -27,6 +28,15 @@ class SavedHeroesRepositoryImpl @Inject constructor(
         try {
             val savedHeroes = savedNameDao.getSavedNames().map { it.toDomain() }
             Result.success(savedHeroes)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun deleteSavedHero(heroId: UUID): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            savedNameDao.deleteByUuid(heroId.toString())
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
