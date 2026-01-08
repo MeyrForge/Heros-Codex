@@ -2,6 +2,8 @@ package com.meyrforge.heroscodex.di
 
 import com.meyrforge.heroscodex.core.data.repository.SavedHeroesRepositoryImpl
 import com.meyrforge.heroscodex.core.domain.repository.SavedHeroesRepository
+import com.meyrforge.heroscodex.core.data.repository.TokensRepositoryImpl
+import com.meyrforge.heroscodex.core.domain.repository.TokensRepository
 import com.meyrforge.heroscodex.feature_name_generator.data.repository.NameRepositoryImpl
 import com.meyrforge.heroscodex.feature_name_generator.domain.repository.NameRepository
 import dagger.Binds
@@ -25,4 +27,10 @@ abstract class RepositoryModule {
     abstract fun bindSavedHeroesRepository(
         savedHeroesRepositoryImpl: SavedHeroesRepositoryImpl
     ): SavedHeroesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTokensRepository(
+        tokensRepositoryImpl: TokensRepositoryImpl
+    ): TokensRepository
 }

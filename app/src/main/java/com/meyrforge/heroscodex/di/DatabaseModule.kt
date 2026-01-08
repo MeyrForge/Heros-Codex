@@ -3,6 +3,7 @@ package com.meyrforge.heroscodex.di
 import android.content.Context
 import com.meyrforge.heroscodex.core.database.UserDatabase
 import com.meyrforge.heroscodex.core.database.dao.SavedNameDao
+import com.meyrforge.heroscodex.core.database.dao.SavedTokensDao
 import com.meyrforge.heroscodex.feature_name_generator.data.local.NameDatabase
 import com.meyrforge.heroscodex.feature_name_generator.data.local.dao.NameDao
 import dagger.Module
@@ -42,5 +43,11 @@ object DatabaseModule {
   @Singleton
   fun provideSavedNameDao(database: UserDatabase): SavedNameDao {
     return database.savedNameDao()
+  }
+
+  @Provides
+  @Singleton
+  fun provideSavedTokensDao(database: UserDatabase): SavedTokensDao {
+    return database.savedTokensDao()
   }
 }

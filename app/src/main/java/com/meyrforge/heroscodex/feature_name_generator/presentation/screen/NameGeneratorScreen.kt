@@ -51,6 +51,8 @@ fun NameGeneratorScreen(
   viewModel: NameGeneratorViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsState()
+  val currentTokens = uiState.currentTokens
+  val maxTokens = uiState.maxTokens
   val snackbarHostState = remember { SnackbarHostState() }
 
   LaunchedEffect(uiState.error) {
@@ -75,8 +77,10 @@ fun NameGeneratorScreen(
         .fillMaxSize()
     ) {
       NameGeneratorTopBar(
-        currentTokens = uiState.currentTokens,
-        maxTokens = uiState.maxTokens
+        currentTokens = currentTokens,
+        maxTokens = maxTokens,
+        nextRegenRemainingMs = uiState.nextRegenRemainingMs,
+        onRequestTokens = viewModel::requestTokensNow
       )
 
       Column(

@@ -8,6 +8,7 @@ import com.meyrforge.heroscodex.core.domain.usecase.SaveNameUseCase
 import com.meyrforge.heroscodex.feature_name_generator.domain.model.HeroName
 import com.meyrforge.heroscodex.core.domain.model.Race
 import com.meyrforge.heroscodex.feature_name_generator.domain.usecase.GenerateNameUseCase
+import com.meyrforge.heroscodex.core.domain.repository.TokensRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,13 +16,34 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel
 class NameGeneratorViewModel @Inject constructor(
   private val generateNameUseCase: GenerateNameUseCase,
-  private val saveNameUseCase: SaveNameUseCase
+  private val saveNameUseCase: SaveNameUseCase,
+  private val tokensRepository: TokensRepository
 ) : ViewModel() {
+
+  init {
+    viewModelScope.launch {
+      tokensRepository.currentTokensFlow().collect { current ->
+        _uiState.update { it.copy(currentTokens = current) }
+      }
+    }
+
+    viewModelScope.launch {
+      tokensRepository.maxTokensFlow().collect { max ->
+        _uiState.update { it.copy(maxTokens = max) }
+      }
+    }
+    viewModelScope.launch {
+      tokensRepository.nextRegenRemainingFlow().collect { remaining ->
+        _uiState.update { it.copy(nextRegenRemainingMs = remaining) }
+      }
+    }
+  }
 
   private val _uiState = MutableStateFlow(NameGeneratorUiState())
   val uiState: StateFlow<NameGeneratorUiState> = _uiState.asStateFlow()
@@ -39,11 +61,17 @@ class NameGeneratorViewModel @Inject constructor(
   }
 
   fun generateName() {
-    if (_uiState.value.currentTokens <= 0) return
-
-    _uiState.update { it.copy(isLoading = true) }
-
     viewModelScope.launch {
+      // try to consume a token from repository
+      val consumeResult = tokensRepository.consume(1)
+      val consumed = consumeResult.getOrElse { false }
+      if (!consumed) {
+        _uiState.update { it.copy(error = "No tienes tokens suficientes") }
+        return@launch
+      }
+
+      _uiState.update { it.copy(isLoading = true) }
+
       delay(1220L)
       val result = generateNameUseCase(
         gender = _uiState.value.selectedGender,
@@ -56,7 +84,6 @@ class NameGeneratorViewModel @Inject constructor(
           _uiState.update {
             it.copy(
               generatedName = heroName,
-              currentTokens = it.currentTokens - 1,
               isLoading = false,
               error = null
             )
@@ -108,6 +135,15 @@ class NameGeneratorViewModel @Inject constructor(
   fun clearError() {
     _uiState.update { it.copy(error = null) }
   }
+
+  fun requestTokensNow() {
+    viewModelScope.launch {
+      // collect first emissions to force repository computations while UI shows loader
+      tokensRepository.currentTokensFlow().first()
+      tokensRepository.maxTokensFlow().first()
+      tokensRepository.nextRegenRemainingFlow().first()
+    }
+  }
 }
 
 data class NameGeneratorUiState(
@@ -115,8 +151,9 @@ data class NameGeneratorUiState(
   val selectedGender: Gender = Gender.MALE,
   val selectedBackground: Background = Background.ACOLYTE,
   val generatedName: HeroName? = null,
-  val currentTokens: Int = 10,
-  val maxTokens: Int = 10,
+  val currentTokens: Int = -1,
+  val maxTokens: Int = -1,
+  val nextRegenRemainingMs: Long = -1L,
   val isLoading: Boolean = false,
   val isSaving: Boolean = false,
   val error: String? = null
