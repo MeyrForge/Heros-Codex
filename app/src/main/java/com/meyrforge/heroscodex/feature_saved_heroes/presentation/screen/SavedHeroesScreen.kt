@@ -175,6 +175,14 @@ fun SavedHeroesScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
+                        Text(
+                            text = "Editar un héroe consumirá 1 token",
+                            textAlign = TextAlign.Center,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                        )
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -229,7 +237,7 @@ fun SavedHeroesScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Generar un nuevo nombre para \n\n ${savedHero.name}?",
+                            text = "¿Generar un nuevo nombre para \n\n ${savedHero.name}?",
                             textAlign = TextAlign.Center,
                             fontSize = 20.sp,
                             modifier = Modifier.fillMaxWidth()
