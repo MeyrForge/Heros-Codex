@@ -30,6 +30,17 @@ fun SavedNameEntity.toDomain(): SavedHero {
     )
 }
 
+fun SavedHero.toEntity(): SavedNameEntity {
+    return SavedNameEntity(
+        uuid = this.id.toString(),
+        name = this.name,
+        raceId = this.race.toId(),
+        genderId = this.gender.toId(),
+        backgroundId = this.background.toId(),
+        createdAt = this.createdAt
+    )
+}
+
 private fun Race.toId(): Int = when (this) {
     Race.DRAGONBORN -> 0
     Race.DWARF -> 1

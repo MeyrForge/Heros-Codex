@@ -41,4 +41,15 @@ class SavedHeroesRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun updateSavedHero(updated: SavedHero): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            // remove existing by uuid then insert updated entity with same uuid
+            savedNameDao.deleteByUuid(updated.id.toString())
+            savedNameDao.insert(updated.toEntity())
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

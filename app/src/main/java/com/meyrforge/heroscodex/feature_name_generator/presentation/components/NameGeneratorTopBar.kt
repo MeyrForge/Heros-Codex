@@ -65,7 +65,7 @@ fun NameGeneratorTopBar(
 }
 
 @Composable
-private fun TokenCounter(
+fun TokenCounter(
   currentTokens: Int,
   maxTokens: Int,
   nextRegenRemainingMs: Long,

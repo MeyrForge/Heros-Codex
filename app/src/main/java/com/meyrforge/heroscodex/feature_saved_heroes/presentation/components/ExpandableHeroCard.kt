@@ -34,6 +34,7 @@ fun ExpandableHeroCard(
     hero: SavedHero,
     isExpanded: Boolean,
     onCardClick: () -> Unit,
+    onEditClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
     Card(
@@ -80,7 +81,7 @@ fun ExpandableHeroCard(
                             .padding(top = 8.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        TextButton(onClick = { /* TODO: Implement Edit */ }) {
+                        TextButton(onClick = { onEditClick() }) {
                             Text("Editar", color = MagicalGold)
                         }
                         Spacer(modifier = Modifier.width(8.dp))

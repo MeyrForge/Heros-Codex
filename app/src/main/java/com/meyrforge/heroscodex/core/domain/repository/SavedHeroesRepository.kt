@@ -8,4 +8,5 @@ interface SavedHeroesRepository {
     suspend fun saveHero(heroName: HeroName): Result<Unit>
     suspend fun getSavedHeroes(): Result<List<SavedHero>>
     suspend fun deleteSavedHero(heroId: UUID): Result<Unit>
+    suspend fun updateSavedHero(updated: SavedHero): Result<Unit>
 }

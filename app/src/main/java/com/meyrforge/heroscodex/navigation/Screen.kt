@@ -4,4 +4,5 @@ sealed class Screen(val route: String) {
   object MainMenu : Screen("main_menu")
   object NameGenerator : Screen("name_generator")
   object SavedHeroes : Screen("saved_heroes")
+  object EditHero : Screen("edit_hero/{heroId}")
 }

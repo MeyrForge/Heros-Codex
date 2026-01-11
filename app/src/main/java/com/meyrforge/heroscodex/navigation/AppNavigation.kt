@@ -26,7 +26,14 @@ fun AppNavigation(innerPadding: PaddingValues) {
       NameGeneratorScreen()
     }
     composable(Screen.SavedHeroes.route){
-      SavedHeroesScreen()
+      SavedHeroesScreen(navController = navController)
+    }
+    composable("edit_hero/{heroId}") { backStackEntry ->
+      val heroId = backStackEntry.arguments?.getString("heroId")
+      com.meyrforge.heroscodex.feature_saved_heroes.presentation.screen.EditHeroTraitsScreen(
+        heroId = heroId ?: "",
+        navController = navController
+      )
     }
   }
 }
